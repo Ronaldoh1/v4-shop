@@ -1,4 +1,5 @@
 'use strict';
+
 const fs = require('fs');
 const express = require('express');
 const path = require('path');
@@ -6,15 +7,11 @@ const favicon = require('serve-favicon');
 const logger = require('morgan');
 const bodyParser = require('body-parser');
 const cors = require('express-cors');
-const jwt = require('express-jwt');
-const elasticsearch = require('elasticsearch');
+//const jwt = require('express-jwt');
+//const JSONApi = require('jsonapi-serializer');
+//const JSONAPIError = JSONApi.Error;
 
 const app = express();
-const esClientHost = `${process.env.ELASTICSEARCH_AUTH || 'elastic:changeme'}@${process.env.ELASTICSEARCH_URL || 'localhost:9200'}`;
-const esclient = new elasticsearch.Client({
-  host: esClientHost,
-  log: 'trace'
-});
 
 app.use(favicon(path.join(__dirname, 'public', 'favicon.png')));
 app.use(logger('dev'));
@@ -38,21 +35,39 @@ app.use(cors({
 // }));
 
 fs.readdirSync('./routes').forEach((file) => {
+  console.log(file);
   if (file !== '.gitkeep') {
     app.use('/v4', require('./routes/' + file));
   }
 });
 
 app.get('/', (req, res) => {
-  esclient.cat.health({
-    format: 'json',
-  })
-    .then((results) => {
-      res.json({
-        success: true,
-        elastic_status: results[0].status,
-      });
-    });
+  res.json({
+    success: true,
+  });
+});
+
+// catch 404 and forward to error handler
+app.use(function (req, res, next) {
+  const notFoundError = new Error('HTTP 404 Not Found');
+  notFoundError.status = 404;
+  notFoundError.detail = `Url not found: ${req.url}`;
+  next(notFoundError);
+});
+
+app.use(function (err, req, res, next) {
+  res.status(err.status || 500);
+  const errorStructure = {
+    status: err.status || 500,
+    title: err.message,
+    detail: err.detail || err.message,
+  };
+  if ({}.hasOwnProperty.call(err, 'source') === true) {
+    errorStructure.source = err.source;
+  }
+  //const error = new JSONAPIError(errorStructure);
+  res.json(errorStructure);
 });
 
 module.exports = app;
+
