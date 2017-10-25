@@ -18,9 +18,9 @@ module.exports = {
         client: 'mysql',
         connection: {
             host : 'localhost',
-            user : 'webuser',
-            password : 'webuser',
-            database : 'todos'
+            user : 'v4dbuser',
+            password : 'v4dbuser',
+            database : 'v4dbtodos'
           },
         migrations: {
             directory: __dirname + '/db/migrations',
