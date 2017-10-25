@@ -20,7 +20,7 @@ module.exports = {
             host : 'localhost',
             user : 'v4dbuser',
             password : 'v4dbuser',
-            database : 'v4dbtodos'
+            database : 'v4db'
           },
         migrations: {
             directory: __dirname + '/db/migrations',
