@@ -2,6 +2,23 @@
 var knex = require('../db/knex');
 const me = {};
 
+function add_images(obj, image_property_name) {
+    const assets_url = "http://api-dev.selfiestyler.com/assets/images/";
+    let hi_res_filename = 'not found';
+    let lo_res_filename = 'not found';
+  
+    const filename = obj[image_property_name];    
+    if (filename) {
+        const image_filename = filename.substring(0, filename.length-4);
+        const extension = filename.substring(filename.length-4);
+        hi_res_filename = assets_url + image_filename + '_hi' + extension;
+        lo_res_filename = assets_url + image_filename + '_lo' + extension;
+    } 
+    
+    obj['image'] = [ {'hi_res':hi_res_filename},  {'low_res':lo_res_filename} ];
+  }
+
+
 function mapper(instance) {
     let obj;
   
@@ -10,7 +27,7 @@ function mapper(instance) {
         name:instance.name, 
         code:instance.code, 
         products_summary:instance.products_summary, 
-        image:instance.image, 
+        brand_image:instance.image, 
         image_desc:instance.image_desc, 
         created_at:instance.created_at, 
         updated_at:instance.updated_at, 
@@ -20,6 +37,9 @@ function mapper(instance) {
         deleted:instance.deleted
     })
   
+    add_images(obj, 'brand_image');
+    delete obj.brand_image;
+
     return obj;
 }
 
@@ -38,15 +58,20 @@ function get_popular_brand(callback) {
         .orderBy('display_order', 'asc')
         .then(function(instances) {
             const resObj = instances.map(function (instance) {
-                return Object.assign({
+                let obj = Object.assign({
                     display_order: instance.display_order,
                     brand_id: instance.brand_id,
                     brand_name: instance.brand_name,
                     brand_products_summary: instance.products_summary,
                     brand_image: instance.brand_image,
                     brand_image_description: instance.image_desc
-                })
+                });
+                add_images(obj, "brand_image");
+                delete obj.brand_image;
+                return obj;
             })        
+        
+
         callback(resObj);        
     });     
 }

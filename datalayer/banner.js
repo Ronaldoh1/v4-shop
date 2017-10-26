@@ -2,6 +2,22 @@
 var knex = require('../db/knex');
 const me = {};
 
+function add_images(obj, image_property_name) {
+  const assets_url = "http://api-dev.selfiestyler.com/assets/images/";
+  let hi_res_filename = 'not found';
+  let lo_res_filename = 'not found';
+
+  const filename = obj[image_property_name];    
+  if (filename) {
+      const image_filename = filename.substring(0, filename.length-4);
+      const extension = filename.substring(filename.length-4);
+      hi_res_filename = assets_url + image_filename + '_hi' + extension;
+      lo_res_filename = assets_url + image_filename + '_lo' + extension;
+  } 
+  
+  obj['image'] = [ {'hi_res':hi_res_filename},  {'low_res':lo_res_filename} ];
+}
+
 function mapper(instance) {
   let obj;
 
@@ -9,7 +25,7 @@ function mapper(instance) {
     banner_id:instance.id,
     parent_id:instance.parent_id,
     name:instance.name, 
-    image:instance.image, 
+    banner_image:instance.image, 
     image_position:instance.image_position, 
     banner_type:instance.banner_type, 
     display_screen:instance.display_screen,           
@@ -26,6 +42,8 @@ function mapper(instance) {
     updated_at:instance.updated_at, 
     disabled:instance.disabled
   })
+  
+  add_images(obj, 'banner_image');
 
   return obj;
 }
@@ -90,7 +108,7 @@ function get_hero_banners(callback) {
                   target_type = 'brand';
                 }
         
-                return Object.assign({
+                let obj =  Object.assign({
                   banner_id: instance.banner_id,
                   banner_name: instance.banner_name,
                   banner_image: instance.banner_image,
@@ -99,7 +117,12 @@ function get_hero_banners(callback) {
                   banner_rank: instance.rank,
                   banner_target_id: target_id,
                   banner_target_type: target_type
-                })
+                });
+
+                add_images(obj, 'banner_image');
+                delete obj.banner_image;
+                
+                return obj;
             })
               
             callback(resObj);        
