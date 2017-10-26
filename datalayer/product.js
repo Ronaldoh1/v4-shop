@@ -25,7 +25,6 @@ function add_images(obj, image_property_name) {
   obj['image'] = [ {'hi_res':hi_res_filename},  {'low_res':lo_res_filename} ];
 }
 
-
 function mapper(instance) {
     let obj;
   
@@ -79,10 +78,8 @@ function mapper(instance) {
         screen_position:instance.screen_position,
         deleted:instance.deleted
     })
-  
     return obj;
 }
-
 
 const db_get_product = async (product_id) => {  
   
@@ -194,8 +191,6 @@ const db_get_product_sizes = async (product_id) => {
 
     return sizes;
   }
-
-  
   
 const db_get_product_colors = async (product_id) => {  
 
@@ -250,7 +245,6 @@ const db_get_style_async = async (product_id) => {
   
   return style;
 }
-
 
 const compose_product_obj= async(product_id) =>  {
 
@@ -390,7 +384,6 @@ const compose_product_obj= async(product_id) =>  {
   return products;
 }
 
-
 const db_get_products = async (product_id, callback) => {  
 
   let result;
@@ -416,7 +409,6 @@ function get_product(product_id, callback) {
 }
 me.get_product = get_product;
 
-
 const db_get_style = async (product_id, callback) => {  
   
   const result = await db_get_style_async(product_id);
@@ -426,7 +418,6 @@ const db_get_style = async (product_id, callback) => {
     callback(obj);
   }
 }
-
 
 function get_style(product_id, callback) {  
   db_get_style(product_id, (results) => {
