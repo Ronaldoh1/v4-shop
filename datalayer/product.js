@@ -170,6 +170,7 @@ const db_insert_style = async (product_id, data) => {
 }
   
 const db_get_style = async (product_id) => {    
+
   const style = await knex('styles')
       .where({'product_id':product_id})
       .select();
@@ -178,7 +179,6 @@ const db_get_style = async (product_id) => {
 }
 
 const db_get_products = async (product_id, callback) => {  
-
 
   const result = await db_get_style(product_id);
   
@@ -190,151 +190,150 @@ const db_get_products = async (product_id, callback) => {
     const obj = JSON.parse(result[0].style);
     //var pretty_obj = JSON.stringify(obj, null, 2); // spacing level = 2
     //console.log(pretty_obj);
-    callback(obj);    
-  }
-  
-  
-  // do prices vary?
-  // do weights vary?
-
-  var where;
-  
-  if (product_id === -1) {
-    where = {'product.disabled':0};
+    callback(obj);
   } else {
-    where = {'product.id':product_id, 'product.disabled':0};
-  }
+    // do prices vary?
+    // do weights vary?
 
-  const products = await knex('product')
-    .innerJoin('brand', 'product.brand_id', 'brand.id')
-    .innerJoin('product_fit', 'product.id', 'product_fit.product_id')    
-    .innerJoin('clothing_type', 'product.clothing_type_id', 'clothing_type.id')
-    .column([
-        'product.id as product_id', 
-        'product.clothing_type_id as product_clothing_type_id', 
-        'product.brand_id as product_brand_id', 
-        'product.name as product_name',
-        'product.image as product_image',
-        'product.image_description as product_image_description',
-        'product_fit.styling_type as product_styling_type',
-        'product_fit.sleeve_styling as product_sleeve_styling',
-        'product_fit.fit_type as product_fit_type',
-        'product.gender as product_gender',
-        'product.description as product_description', 
-        'product.display_product_color_id  as product_display_product_color_id', 
-        'product.disabled as product_disabled', 
-        'product.retailer_id as product_retailer_id',         
-        'product.deleted as product_deleted', 
-        'product.status as product_status', 
-        'product.item_name as product_item_name', 
-        'product.country_origin as product_country_origin', 
-        'product.item_details as product_item_details', 
-        'product.care_label as product_care_label', 
-        'product.default_clothing as product_default_clothing',
-        'product.description as product_description',
-        'product.clothing_type_id as product_clothing_type_id',
-        'clothing_type.name as product_clothing_type_name',
-        'clothing_type.average_weight as product_average_weight',
-        'clothing_type.heaviest_weight as product_heaviest_weight',        
-        'brand.name as product_brand_name'
-    ])
-    .where(where)
-    .select();
-  
-  //console.log(products);
-  
-  if (products.length === 0) {
-    console.log(`product ${product_id} has no items.`);
-    callback(0);
-  }
-  
-  for (let product of products) {
+    var where;
     
-    product['product_care_label'] = striptags(product['product_care_label']);
-    product['product_description'] = striptags(product['product_description']);
-    product['product_item_details'] = striptags(product['product_item_details']);
-    //product['product_item_details'] = _.replace(product['product_item_details'], "/\r\n/g", ";");
-
-    product['product_item_details'] = product['product_item_details'].replace(/\r\n/gi, ";");
-    product['product_item_details'] = product['product_item_details'].replace(/^;/, "");
-    product['product_item_details'] = product['product_item_details'].replace(/;\s+/g, ";");
-    product['product_item_details'] = product['product_item_details'].replace(/;$/, "");
-
-    var details_array = product['product_item_details'].split(';');
-
-    product['product_item_details_items'] = details_array;
-
-    console.log(product['product_item_details']);
-    console.log('products loop', product.product_id);
-
-    const weights = await db_get_product_weights(product.product_id);
-    //console.log(sizes);
-    product['weights'] = weights;
-
-    const sizes = await db_get_product_sizes(product.product_id);
-    //console.log(sizes);
-
-    product['sizes'] = sizes;
-
-    product['product_sizes'] = _.map(sizes, 'size');
-
-    const colors = await db_get_product_colors(product.product_id);
-    //console.log(colors);
-
-    product['colors'] = colors;
-    product['product_colors'] = _.map(colors, 'color');
-
-    const prices = await db_get_product_prices(product.product_id);
-    //console.log(prices);
-    if (prices.length > 0) {
-      product['prices'] = prices;
-      product['product_price'] = prices[0].price;
+    if (product_id === -1) {
+      where = {'product.disabled':0};
     } else {
-      product['product_price'] = 0;
+      where = {'product.id':product_id, 'product.disabled':0};
     }
 
-    const product_items = await db_get_product_items(product.product_id);    
-    product['product_items'] = product_items;
+    const products = await knex('product')
+      .innerJoin('brand', 'product.brand_id', 'brand.id')
+      .innerJoin('product_fit', 'product.id', 'product_fit.product_id')    
+      .innerJoin('clothing_type', 'product.clothing_type_id', 'clothing_type.id')
+      .column([
+          'product.id as product_id', 
+          'product.clothing_type_id as product_clothing_type_id', 
+          'product.brand_id as product_brand_id', 
+          'product.name as product_name',
+          'product.image as product_image',
+          'product.image_description as product_image_description',
+          'product_fit.styling_type as product_styling_type',
+          'product_fit.sleeve_styling as product_sleeve_styling',
+          'product_fit.fit_type as product_fit_type',
+          'product.gender as product_gender',
+          'product.description as product_description', 
+          'product.display_product_color_id  as product_display_product_color_id', 
+          'product.disabled as product_disabled', 
+          'product.retailer_id as product_retailer_id',         
+          'product.deleted as product_deleted', 
+          'product.status as product_status', 
+          'product.item_name as product_item_name', 
+          'product.country_origin as product_country_origin', 
+          'product.item_details as product_item_details', 
+          'product.care_label as product_care_label', 
+          'product.default_clothing as product_default_clothing',
+          'product.description as product_description',
+          'product.clothing_type_id as product_clothing_type_id',
+          'clothing_type.name as product_clothing_type_name',
+          'clothing_type.average_weight as product_average_weight',
+          'clothing_type.heaviest_weight as product_heaviest_weight',        
+          'brand.name as product_brand_name'
+      ])
+      .where(where)
+      .select();
     
-    console.log('here', product.product_id);
+    //console.log(products);
     
-    console.log(product);
-
-    const result = await db_get_style(product.product_id);
-    
-    console.log('here');
-
-    if (result.length===1) {
-      console.log('style found in database');
-      //console.log(style[0].style);
-      //const obj = JSON.parse(style[0].style);
-      //var pretty_obj = JSON.stringify(obj, null, 2); // spacing level = 2
-      //console.log(pretty_obj);
-      callback(result[0]);  
+    if (products.length === 0) {
+      console.log(`product ${product_id} has no items.`);
+      callback(0);
     }
-    else {
-      console.log('style not found');
-      const results = await insert_style(product.product_id, JSON.stringify(product));
-      console.log('insert results:',results);
-  
-      const style = await db_get_style(product.product_id);
-      //console.log('style:', style[0].style);
-      //console.log(prettyjson.render(style[0].style, prettyjson_options));
+    
+    for (let product of products) {
       
-      //console.log(beautify(style[0].style, null, 2, 100));
+      product['product_care_label'] = striptags(product['product_care_label']);
+      product['product_description'] = striptags(product['product_description']);
+      product['product_item_details'] = striptags(product['product_item_details']);
+      //product['product_item_details'] = _.replace(product['product_item_details'], "/\r\n/g", ";");
+
+      product['product_item_details'] = product['product_item_details'].replace(/\r\n/gi, ";");
+      product['product_item_details'] = product['product_item_details'].replace(/^;/, "");
+      product['product_item_details'] = product['product_item_details'].replace(/;\s+/g, ";");
+      product['product_item_details'] = product['product_item_details'].replace(/;$/, "");
+
+      var details_array = product['product_item_details'].split(';');
+
+      product['product_item_details_items'] = details_array;
+
+      console.log(product['product_item_details']);
+      console.log('products loop', product.product_id);
+
+      const weights = await db_get_product_weights(product.product_id);
+      //console.log(sizes);
+      product['weights'] = weights;
+
+      const sizes = await db_get_product_sizes(product.product_id);
+      //console.log(sizes);
+
+      product['sizes'] = sizes;
+
+      product['product_sizes'] = _.map(sizes, 'size');
+
+      const colors = await db_get_product_colors(product.product_id);
+      //console.log(colors);
+
+      product['colors'] = colors;
+      product['product_colors'] = _.map(colors, 'color');
+
+      const prices = await db_get_product_prices(product.product_id);
+      //console.log(prices);
+      if (prices.length > 0) {
+        product['prices'] = prices;
+        product['product_price'] = prices[0].price;
+      } else {
+        product['product_price'] = 0;
+      }
+
+      const product_items = await db_get_product_items(product.product_id);    
+      product['product_items'] = product_items;
+      
+      console.log('here', product.product_id);
+      
+      console.log(product);
+
+      const result = await db_get_style(product.product_id);
+      
+      console.log('here');
+
+      if (result.length===1) {
+        console.log('style found in database');
+        //console.log(style[0].style);
+        //const obj = JSON.parse(style[0].style);
+        //var pretty_obj = JSON.stringify(obj, null, 2); // spacing level = 2
+        //console.log(pretty_obj);
+        callback(result[0]);  
+      }
+      else {
+        console.log('style not found');
+        const results = await insert_style(product.product_id, JSON.stringify(product));
+        console.log('insert results:',results);
+    
+        const style = await db_get_style(product.product_id);
+        //console.log('style:', style[0].style);
+        //console.log(prettyjson.render(style[0].style, prettyjson_options));
         
-      var file = `./styles/${product.product_id}.json`;
-      
-      console.log(typeof(style[0].style));
-      const obj = JSON.parse(style[0].style);
-      console.log(typeof(obj));
+        //console.log(beautify(style[0].style, null, 2, 100));
+          
+        var file = `./styles/${product.product_id}.json`;
+        
+        console.log(typeof(style[0].style));
+        const obj = JSON.parse(style[0].style);
+        console.log(typeof(obj));
 
-      //,
-      jsonfile.writeFile(file, obj, {spaces: 2, EOL: '\r\n'}, function (err) {
-        if (err) {
-          console.error('err',err)
-        }
-      });  
+        //,
+        jsonfile.writeFile(file, obj, {spaces: 2, EOL: '\r\n'}, function (err) {
+          if (err) {
+            console.error('err',err)
+          }
+        });  
+      }
     }
   }
 }
