@@ -1,10 +1,6 @@
 'use strict';
-//const models = require('../models');
-//var sequelize = models.sequelize;
 var knex = require('../db/knex');
-
 const me = {};
-
 
 function mapper(instance) {
   let obj;
@@ -46,10 +42,10 @@ function get_banner(banner_id, callback) {
 me.get_banner = get_banner;
 
 function get_banners(columns, sorting, filters, paging, callback) {
+    //[LIMIT {[offset,] row_count | row_count OFFSET offset}]
 
-  //[LIMIT {[offset,] row_count | row_count OFFSET offset}]
-    knex.select().from('banner').where({'id':banner_id})
-        .then(function(banners) {
+    knex.select().from('banner')
+        .then(function(instances) {
             const resObj = instances.map(function (instance) {
                 return mapper(instance)
             })        
