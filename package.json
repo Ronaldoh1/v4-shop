@@ -18,6 +18,8 @@
     "express-cors": "0.0.3",
     "express-handlebars": "^3.0.0",
     "express-jwt": "~5.1.0",
+    "forever": "^0.15.3",
+    "forever-monitor": "^1.7.1",
     "jquery": "^3.2.1",
     "json-beautify": "^1.0.1",
     "jsonfile": "^4.0.0",
