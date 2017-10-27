@@ -1,23 +1,7 @@
 'use strict';
 var knex = require('../db/knex');
+var img = require('./images.js');
 const me = {};
-
-function add_images(category) {
-    const assets_url = "http://api-dev.selfiestyler.com/assets/images/";
-    let hi_res_filename = 'not found';
-    let lo_res_filename = 'not found';
-
-    const filename = category['category_image'];    
-    if (filename) {
-        const image_filename = filename.substring(0, filename.length-4);
-        const extension = filename.substring(filename.length-4);
-        hi_res_filename = assets_url + image_filename + '_hi' + extension;
-        lo_res_filename = assets_url + image_filename + '_lo' + extension;
-    } 
-    
-    category['image'] = [ {'hi_res':hi_res_filename},  {'low_res':lo_res_filename} ];
-}
-
 
 const db_get_category = async (category_id, callback) => {  
 
@@ -77,7 +61,7 @@ function get_top_level_categories(callback) {
         .then(function(instances) {
             const resObj = instances.map(function (instance) {
 
-                 add_images(instance);
+                 img.add_images(instance, 'category_image');
                  delete instance.category_image;
                  delete instance.category_image_description;
 
@@ -133,14 +117,14 @@ me.get_sub_categories = get_sub_categories;
 const foo = async(category_id,callback) => {
 
     const category = await db_get_category(category_id);    
-    add_images(category);
+    img.add_images(category, 'category_image');
     delete category.category_image;
     delete category.category_image_description;
 
     const sub_categories = await db_get_sub_categories(category_id);
     
     for (let sub_category of sub_categories) {
-        add_images(sub_category);
+        img.add_images(sub_category, 'category_image');
         delete sub_category.category_image;
         delete sub_category.category_image_description;
     }

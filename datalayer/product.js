@@ -7,23 +7,9 @@ var prettyjson = require('prettyjson');
 var beautify = require("json-beautify");
 var striptags = require('striptags');
 var _ = require('lodash');
+var img = require('./images.js');
 const me = {};
 
-function add_images(obj, image_property_name) {
-  const assets_url = "http://api-dev.selfiestyler.com/assets/images/";
-  let hi_res_filename = 'not found';
-  let lo_res_filename = 'not found';
-
-  const filename = obj[image_property_name];    
-  if (filename) {
-      const image_filename = filename.substring(0, filename.length-4);
-      const extension = filename.substring(filename.length-4);
-      hi_res_filename = assets_url + image_filename + '_hi' + extension;
-      lo_res_filename = assets_url + image_filename + '_lo' + extension;
-  } 
-  
-  obj['image'] = [ {'hi_res':hi_res_filename},  {'low_res':lo_res_filename} ];
-}
 
 function mapper(instance) {
     let obj;
@@ -118,7 +104,7 @@ const db_get_product_items = async (product_id) => {
     .select();
 
   for (let item of items) {
-    add_images(item,'item_image');
+    img.add_images(item,'item_image');
     delete item.item_image;
   }
   return items;
@@ -303,7 +289,7 @@ const compose_product_obj= async(product_id) =>  {
 
   for (let product of products) {
     
-    add_images(product);
+    img.add_images(product, 'product_image');
     delete product.product_image;
 
     product['product_care_label'] = striptags(product['product_care_label']);

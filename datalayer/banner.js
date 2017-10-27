@@ -1,22 +1,7 @@
 'use strict';
 var knex = require('../db/knex');
+var img = require('./images.js');
 const me = {};
-
-function add_images(obj, image_property_name) {
-  const assets_url = "http://api-dev.selfiestyler.com/assets/images/";
-  let hi_res_filename = 'not found';
-  let lo_res_filename = 'not found';
-
-  const filename = obj[image_property_name];    
-  if (filename) {
-      const image_filename = filename.substring(0, filename.length-4);
-      const extension = filename.substring(filename.length-4);
-      hi_res_filename = assets_url + image_filename + '_hi' + extension;
-      lo_res_filename = assets_url + image_filename + '_lo' + extension;
-  } 
-  
-  obj['image'] = [ {'hi_res':hi_res_filename},  {'low_res':lo_res_filename} ];
-}
 
 function mapper(instance) {
   let obj;
@@ -43,7 +28,7 @@ function mapper(instance) {
     disabled:instance.disabled
   })
   
-  add_images(obj, 'banner_image');
+  img.add_images(obj, 'banner_image');
 
   return obj;
 }
@@ -119,7 +104,7 @@ function get_hero_banners(callback) {
                   banner_target_type: target_type
                 });
 
-                add_images(obj, 'banner_image');
+                img.add_images(obj, 'banner_image');
                 delete obj.banner_image;
                 
                 return obj;

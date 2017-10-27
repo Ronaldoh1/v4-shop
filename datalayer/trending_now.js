@@ -1,23 +1,7 @@
 'use strict';
 var knex = require('../db/knex');
+var img = require('./images.js');
 const me = {};
-
-
-function add_images(obj, image_property_name) {
-    const assets_url = "http://api-dev.selfiestyler.com/assets/images/";
-    let hi_res_filename = 'not found';
-    let lo_res_filename = 'not found';
-  
-    const filename = obj[image_property_name];    
-    if (filename) {
-        const image_filename = filename.substring(0, filename.length-4);
-        const extension = filename.substring(filename.length-4);
-        hi_res_filename = assets_url + image_filename + '_hi' + extension;
-        lo_res_filename = assets_url + image_filename + '_lo' + extension;
-    } 
-    
-    obj['image'] = [ {'hi_res':hi_res_filename},  {'low_res':lo_res_filename} ];
-  }
 
 
 const db_get_trending_now_async = async () => {   
@@ -44,9 +28,32 @@ const db_get_trending_now_async = async () => {
         delete obj.prices; 
         delete obj.colors;  
         delete obj.weights;
-        add_images(obj, 'product_image');
+
+        delete obj.product_disabled;
+        delete obj.product_fit_type;
+        delete obj.product_item_name;
+        delete obj.product_brand_name;
+        delete obj.product_care_label;
+        delete obj.product_description;
+        delete obj.product_retailer_id;
+        delete obj.product_item_details;
+        delete obj.product_styling_type;
+        delete obj.product_average_weight;
+        delete obj.product_country_origin;
+        delete obj.product_sleeve_styling;
+        delete obj.product_heaviest_weight;
+        delete obj.product_clothing_type_id;
+        delete obj.product_default_clothing;
+        delete obj.product_image_description;
+        delete obj.product_clothing_type_name;
+        delete obj.product_item_details_items;
+            
+
+        img.add_images(obj, 'product_image');
         delete obj.product_image;            
         delete obj.product_items;
+
+
 
         trending_products['styles'].push(obj);
     }
