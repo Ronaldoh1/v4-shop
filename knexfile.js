@@ -5,7 +5,7 @@ module.exports = {
             host : 'godzilla',
             user : 'webuser',
             password : 'webuser',
-            database : 'v4dev'
+            database : 'v4db'
           },
         migrations: {
             directory: __dirname + '/db/migrations',

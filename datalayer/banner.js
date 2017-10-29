@@ -1,10 +1,7 @@
 'use strict';
-//const models = require('../models');
-//var sequelize = models.sequelize;
 var knex = require('../db/knex');
-
+var img = require('./images.js');
 const me = {};
-
 
 function mapper(instance) {
   let obj;
@@ -13,7 +10,7 @@ function mapper(instance) {
     banner_id:instance.id,
     parent_id:instance.parent_id,
     name:instance.name, 
-    image:instance.image, 
+    banner_image:instance.image, 
     image_position:instance.image_position, 
     banner_type:instance.banner_type, 
     display_screen:instance.display_screen,           
@@ -30,6 +27,8 @@ function mapper(instance) {
     updated_at:instance.updated_at, 
     disabled:instance.disabled
   })
+  
+  img.add_images(obj, 'banner_image');
 
   return obj;
 }
@@ -46,10 +45,10 @@ function get_banner(banner_id, callback) {
 me.get_banner = get_banner;
 
 function get_banners(columns, sorting, filters, paging, callback) {
+    //[LIMIT {[offset,] row_count | row_count OFFSET offset}]
 
-  //[LIMIT {[offset,] row_count | row_count OFFSET offset}]
-    knex.select().from('banner').where({'id':banner_id})
-        .then(function(banners) {
+    knex.select().from('banner')
+        .then(function(instances) {
             const resObj = instances.map(function (instance) {
                 return mapper(instance)
             })        
@@ -94,7 +93,7 @@ function get_hero_banners(callback) {
                   target_type = 'brand';
                 }
         
-                return Object.assign({
+                let obj =  Object.assign({
                   banner_id: instance.banner_id,
                   banner_name: instance.banner_name,
                   banner_image: instance.banner_image,
@@ -103,7 +102,12 @@ function get_hero_banners(callback) {
                   banner_rank: instance.rank,
                   banner_target_id: target_id,
                   banner_target_type: target_type
-                })
+                });
+
+                img.add_images(obj, 'banner_image');
+                delete obj.banner_image;
+                
+                return obj;
             })
               
             callback(resObj);        
