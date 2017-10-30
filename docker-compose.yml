@@ -1,0 +1,32 @@
+version: '2'
+services:
+  shop:
+    build: .
+    command: npm start
+    volumes:
+      - .:/app
+    ports:
+      - 3001:3001
+    links:
+      - mysql:mysql
+      - redis:redis
+    environment:
+      - OKTA_URL=https://dev-992937-admin.oktapreview.com
+      - OKTA_APIKEY=00X4rtA1m6yBn9NP5TqLteBetMoQrhFQchoNHmujb1
+      - DATABASE_URL=mysql://local_ss:local_ss!1234@localhost:3306/local_ss
+      - REDIS_URL=redis://redis:6379
+      - PORT=3001
+      - NODE_ENV=development
+  mysql:
+    image: mysql
+    environment:
+      - MYSQL_DATABASE=local_ss
+      - MYSQL_USER=local_ss
+      - MYSQL_PASSWORD=local_ss!1234
+      - MYSQL_ROOT_PASSWORD=root_ss!1234
+    volumes:
+      - ./db:/tmp/db
+  redis:
+    image: redis:3.0.7-alpine
+    ports:
+      - "6379:6379"
