@@ -1,5 +1,6 @@
 'use strict';
 var knex = require('../db/knex');
+var img = require('./images.js');
 const me = {};
 
 function get_look_l1(callback) {

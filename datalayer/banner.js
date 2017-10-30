@@ -106,6 +106,9 @@ function get_hero_banners(callback) {
 
                 img.add_images(obj, 'banner_image');
                 delete obj.banner_image;
+                delete obj.banner_name;
+                delete obj.banner_descripion;
+                delete obj.banner_image_position;
                 
                 return obj;
             })

@@ -13,14 +13,14 @@ function get_shop_l1(callback) {
       banner.get_hero_banners(function(hero_banners2) {
       //look.get_look_l1(function(top_look_banner) { 
         trending_now.get_trending_now(function(top_trending_now) {
-          brand.get_popular_brand(function(top_popular_brand){
+          brand.get_popular_brand(function(popular_brands){
             callback(Object.assign({
-              hero_banners_section_1:hero_banners1,
+              featured:hero_banners1,
               categories:top_level_categories,
               //look_banner:top_look_banner,
-              hero_banners_section_2:hero_banners2,              
+              looks_we_Love:hero_banners2,              
               trending_now:top_trending_now,
-              popular_brand:top_popular_brand
+              popular_brands:popular_brands
             }));
           })
         })

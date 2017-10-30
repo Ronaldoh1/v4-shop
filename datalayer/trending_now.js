@@ -18,44 +18,23 @@ const db_get_trending_now_async = async () => {
     
     //console.log(results);
 
-    let trending_products = Object();
-    trending_products['styles'] = [];
+    let trending_products = [];
 
     for (let item of results) {       
         //console.log(item);
         const obj = JSON.parse(item.style);
-        delete obj.sizes;        
-        delete obj.prices; 
-        delete obj.colors;  
-        delete obj.weights;
+        
+        let response_obj = {}
+        response_obj['item_id'] = obj.product_id;
+        response_obj['name'] = obj.product_name;
+        response_obj['price'] = obj.product_price;
+        response_obj['colors_available'] = obj.colors.length;
+        response_obj['gender'] = obj.product_gender;
+        response_obj['isFavorited'] = false;
+        response_obj['brand'] =  obj.product_brand_name;
+        img.add_images(response_obj, 'product_image');
 
-        delete obj.product_disabled;
-        delete obj.product_fit_type;
-        delete obj.product_item_name;
-        delete obj.product_brand_name;
-        delete obj.product_care_label;
-        delete obj.product_description;
-        delete obj.product_retailer_id;
-        delete obj.product_item_details;
-        delete obj.product_styling_type;
-        delete obj.product_average_weight;
-        delete obj.product_country_origin;
-        delete obj.product_sleeve_styling;
-        delete obj.product_heaviest_weight;
-        delete obj.product_clothing_type_id;
-        delete obj.product_default_clothing;
-        delete obj.product_image_description;
-        delete obj.product_clothing_type_name;
-        delete obj.product_item_details_items;
-            
-
-        img.add_images(obj, 'product_image');
-        delete obj.product_image;            
-        delete obj.product_items;
-
-
-
-        trending_products['styles'].push(obj);
+        trending_products.push(response_obj);
     }
 
     //console.log(trending_products);

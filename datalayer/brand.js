@@ -43,13 +43,15 @@ function get_popular_brand(callback) {
         .orderBy('display_order', 'asc')
         .then(function(instances) {
             const resObj = instances.map(function (instance) {
+                
+                //brand_image_description: instance.image_desc
+                //brand_products_summary: instance.products_summary,
+                //brand_name: instance.brand_name,                    
+
                 let obj = Object.assign({
                     display_order: instance.display_order,
-                    brand_id: instance.brand_id,
-                    brand_name: instance.brand_name,
-                    brand_products_summary: instance.products_summary,
-                    brand_image: instance.brand_image,
-                    brand_image_description: instance.image_desc
+                    brand_id: instance.brand_id,                    
+                    brand_image: instance.brand_image
                 });
                 img.add_images(obj, "brand_image");
                 delete obj.brand_image;

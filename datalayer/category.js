@@ -80,7 +80,7 @@ function get_top_level_categories(callback) {
 
 
             
-        callback({'category_l1':resObj});        
+        callback(resObj);
     });     
 }
 me.get_top_level_categories = get_top_level_categories;
