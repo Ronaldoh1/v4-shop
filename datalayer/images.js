@@ -11,9 +11,8 @@ function add_images(obj, image_property_name) {
     if (filename) {
         let image_filename = filename.substring(0, filename.length-4);
         let extension = filename.substring(filename.length-4);
-
-        image_filename = 'Banner_L1_First01';
-        extension = ".jpg";
+        //image_filename = 'Banner_L1_First01';
+        //extension = ".jpg";
         hi_res_filename = assets_url + image_filename + '_3x' + extension;
         lo_res_filename = assets_url + image_filename + '_2x' + extension;
     } 

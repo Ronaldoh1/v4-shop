@@ -58,7 +58,7 @@ function get_banners(columns, sorting, filters, paging, callback) {
 me.get_banners = get_banners;
 
 
-function get_hero_banners(callback) {
+function get_hero_banners(banner_group, callback) {
 
     knex.select().column(['id as banner_id',
                         'name as banner_name',
@@ -72,7 +72,7 @@ function get_hero_banners(callback) {
                         'product_id',
                         'brand_id',
                         'banner_filter']).
-        from('banner').where({image_position:'hero',display_screen:'l1',disabled:0})
+        from('banner').where({image_position:'hero',display_screen:banner_group,disabled:0})
         .then(function(instances) {
 
             const resObj = instances.map(function (instance) {
@@ -105,6 +105,7 @@ function get_hero_banners(callback) {
                 });
 
                 img.add_images(obj, 'banner_image');
+
                 delete obj.banner_image;
                 delete obj.banner_name;
                 delete obj.banner_descripion;
