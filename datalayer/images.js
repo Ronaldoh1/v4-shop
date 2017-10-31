@@ -17,7 +17,6 @@ function add_images(obj, image_property_name) {
         lo_res_filename = assets_url + image_filename + '_2x' + extension;
     } 
 
-
     obj['image'] = {'hi_res':hi_res_filename,  'low_res':lo_res_filename};
 }
 

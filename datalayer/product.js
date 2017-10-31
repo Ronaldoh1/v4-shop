@@ -231,6 +231,21 @@ const db_get_style_async = async (product_id) => {
   
   return style;
 }
+const db_get_brand_styles_async = async (brand_id) => {    
+  
+    console.log('db_get_brand_styles_async',brand_id);
+
+    const style = await knex('styles')
+        .select()
+        .column(['style', 'image as product_image'])        
+        .innerJoin('product', 'styles.product_id', 'product.id')        
+        .where({'brand_id':brand_id});
+    
+    return style;
+  }
+
+
+
 
 const compose_product_obj= async(product_id) =>  {
 
@@ -405,6 +420,38 @@ const db_get_style = async (product_id, callback) => {
   }
 }
 
+
+const db_get_brand_styles = async (brand_id, callback) => {  
+  
+  const results = await db_get_brand_styles_async(brand_id);
+  //const results = await db_get_style_async(784);
+  
+
+  console.log('db_get_brand_styles_async returns:',results.length);
+
+  const resObj = results.map(function (instance) {
+    const obj = JSON.parse(instance.style);
+
+    let response_obj = {}
+    response_obj['item_id'] = obj.product_id;
+    response_obj['name'] = obj.product_name;
+    response_obj['price'] = obj.product_price;
+    response_obj['colors_available'] = obj.colors.length;
+    response_obj['gender'] = obj.product_gender;
+    response_obj['isFavorited'] = false;
+    response_obj['brand'] =  obj.product_brand_name;
+    console.log(instance.product_image);
+    response_obj['product_image'] =  instance.product_image + "_Thumbnail.jpg";
+
+    img.add_images(response_obj, 'product_image');
+
+    return response_obj;
+  })        
+  callback(resObj);     
+ 
+}
+
+
 function get_style(product_id, callback) {  
   db_get_style(product_id, (results) => {
     callback(results)
@@ -416,5 +463,13 @@ function get_products(columns, sorting, filters, paging, callback) {
     //[LIMIT {[offset,] row_count | row_count OFFSET offset}]
 }
 me.get_products = get_products;
+
+function get_brand_styles(brand_id, callback) {  
+  db_get_brand_styles(brand_id, (results) => {    
+    callback(results)
+  });
+}
+me.get_brand_styles = get_brand_styles;
+
 
 module.exports = me;

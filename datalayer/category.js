@@ -44,7 +44,54 @@ const db_get_category = async (category_id, callback) => {
         return resObj;
       }
 
+function get_brand_categories(brand_id, callback) {
+    
+    /*
+    select * from categories where  categories.id in (
+        SELECT categories.id FROM categories, category_products, product
+        WHERE
+          category_products.categories_id = categories.id
+        AND  category_products.product_id = product.id
+        AND brand_id = 35
+        AND parent_id is null
+        group by categories.id);
+    */
 
+    knex.select()
+        .column([
+            'categories.id as category_id', 
+            'categories.name as category_name', 
+            'categories.image as category_image', 
+            'categories.image_description as category_image_description',
+            'categories.display_order'
+        ])
+        .from('categories')
+        .whereIn('categories.id', function() {
+            this.select()
+                .distinct('categories.id')
+                .from('categories')
+                .innerJoin('category_products', 'categories.id', 'category_products.categories_id')
+                .innerJoin('product', 'category_products.product_id', 'product.id')        
+                .where('product.gender','f')
+                .where('product.disabled',0)
+                .where({parent_id:null,brand_id:brand_id})        
+          })
+        .orderBy('display_order', 'asc')
+        .then(function(instances) {
+            const resObj = instances.map(function (instance) {
+
+                    img.add_images(instance, 'category_image');
+                    delete instance.category_image;
+                    delete instance.category_image_description;
+
+                    return instance;
+            })                    
+        callback(resObj);
+    });     
+}
+me.get_brand_categories = get_brand_categories;
+    
+    
 function get_top_level_categories(callback) {
     
     knex.select()

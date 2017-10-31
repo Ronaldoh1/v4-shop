@@ -9,6 +9,15 @@ router.route(`/product`).get((req, res) => {
   });
 });
 
+router.route(`/style-brand/:id`).get((req, res) => {
+  var brand_id = req.params.id;
+
+  queries.get_brand_styles(brand_id, function(obj) {
+    res.json(obj);  
+  });
+});
+
+
 router.route(`/style`).get((req, res) => {
   queries.get_style(564, function(obj) {
     res.json(obj);  

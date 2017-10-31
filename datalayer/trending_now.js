@@ -11,8 +11,10 @@ const db_get_trending_now_async = async () => {
     const results = await knex.select()
         .columns(['trending_now.product_id as product_id',
                 'trending_now.display_order',
-                'styles.style'])
+                'styles.style',
+                'product.image as product_image'])
         .innerJoin('styles', 'trending_now.product_id', 'styles.product_id')
+        .innerJoin('product', 'trending_now.product_id', 'product.id')
         .from('trending_now')
         .orderBy('display_order', 'asc');
     
@@ -32,6 +34,8 @@ const db_get_trending_now_async = async () => {
         response_obj['gender'] = obj.product_gender;
         response_obj['isFavorited'] = false;
         response_obj['brand'] =  obj.product_brand_name;
+        
+        response_obj['product_image'] =  item.product_image + "_Thumbnail.jpg";
         img.add_images(response_obj, 'product_image');
 
         trending_products.push(response_obj);
